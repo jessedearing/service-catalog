@@ -19,3 +19,9 @@
 
 # Go workspace file
 go.work
+
+# Assignment file (don't want to bloat the registry)
+*.pdf
+
+# Complied erver binary
+server
