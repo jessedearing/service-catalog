@@ -1,0 +1,20 @@
+schema {
+  query: Query
+}
+
+type Service {
+  id: ID!
+  name: String!
+  versions: [Version!]!
+}
+
+type Version {
+  id: ID!
+  version: String!
+}
+
+type Query {
+  services(page: Int): [Service!]!
+  service(id: ID!): Service
+  searchByName(name: String!): [Service!]!
+}
