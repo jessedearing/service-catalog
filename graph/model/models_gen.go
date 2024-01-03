@@ -2,16 +2,20 @@
 
 package model
 
+import (
+	"github.com/google/uuid"
+)
+
 type Query struct {
 }
 
 type Service struct {
-	ID       string     `json:"id"`
+	ID       uuid.UUID  `json:"id"`
 	Name     string     `json:"name"`
 	Versions []*Version `json:"versions"`
 }
 
 type Version struct {
-	ID      string `json:"id"`
-	Version string `json:"version"`
+	ID      uuid.UUID `json:"id"`
+	Version string    `json:"version"`
 }

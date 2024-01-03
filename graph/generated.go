@@ -14,6 +14,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/google/uuid"
 	"github.com/jessedearing/service-catalog/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -48,7 +49,7 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Query struct {
 		SearchByName func(childComplexity int, name string) int
-		Service      func(childComplexity int, id string) int
+		Service      func(childComplexity int, id uuid.UUID) int
 		Services     func(childComplexity int, page *int) int
 	}
 
@@ -66,7 +67,7 @@ type ComplexityRoot struct {
 
 type QueryResolver interface {
 	Services(ctx context.Context, page *int) ([]*model.Service, error)
-	Service(ctx context.Context, id string) (*model.Service, error)
+	Service(ctx context.Context, id uuid.UUID) (*model.Service, error)
 	SearchByName(ctx context.Context, name string) ([]*model.Service, error)
 }
 
@@ -111,7 +112,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Service(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Service(childComplexity, args["id"].(uuid.UUID)), true
 
 	case "Query.services":
 		if e.complexity.Query.Services == nil {
@@ -301,10 +302,10 @@ func (ec *executionContext) field_Query_searchByName_args(ctx context.Context, r
 func (ec *executionContext) field_Query_service_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 uuid.UUID
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -443,7 +444,7 @@ func (ec *executionContext) _Query_service(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Service(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().Service(rctx, fc.Args["id"].(uuid.UUID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -707,9 +708,9 @@ func (ec *executionContext) _Service_id(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Service_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -845,9 +846,9 @@ func (ec *executionContext) _Version_id(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Version_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3235,13 +3236,13 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalID(v)
+func (ec *executionContext) unmarshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, v interface{}) (uuid.UUID, error) {
+	res, err := graphql.UnmarshalUUID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
+func (ec *executionContext) marshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, sel ast.SelectionSet, v uuid.UUID) graphql.Marshaler {
+	res := graphql.MarshalUUID(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")

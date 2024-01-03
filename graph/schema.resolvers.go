@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jessedearing/service-catalog/graph/model"
 )
 
@@ -17,7 +18,7 @@ func (r *queryResolver) Services(ctx context.Context, page *int) ([]*model.Servi
 }
 
 // Service is the resolver for the service field.
-func (r *queryResolver) Service(ctx context.Context, id string) (*model.Service, error) {
+func (r *queryResolver) Service(ctx context.Context, id uuid.UUID) (*model.Service, error) {
 	panic(fmt.Errorf("not implemented: Service - service"))
 }
 
