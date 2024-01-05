@@ -10,9 +10,10 @@ type Query struct {
 }
 
 type Service struct {
-	ID       uuid.UUID  `json:"id"`
-	Name     string     `json:"name"`
-	Versions []*Version `json:"versions"`
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	Versions    []*Version `json:"versions"`
 }
 
 type Version struct {

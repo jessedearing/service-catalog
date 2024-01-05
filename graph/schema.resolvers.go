@@ -6,25 +6,54 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jessedearing/service-catalog/graph/model"
+	"github.com/jessedearing/service-catalog/internal/vars"
 )
 
 // Services is the resolver for the services field.
 func (r *queryResolver) Services(ctx context.Context, page *int) ([]*model.Service, error) {
-	panic(fmt.Errorf("not implemented: Services - services"))
+	db, err := vars.GetDBFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pg := 1
+	if page != nil {
+		pg = *page
+	}
+	return db.All(ctx, pg)
 }
 
 // Service is the resolver for the service field.
 func (r *queryResolver) Service(ctx context.Context, id uuid.UUID) (*model.Service, error) {
-	panic(fmt.Errorf("not implemented: Service - service"))
+	db, err := vars.GetDBFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return db.FindByID(ctx, id)
 }
 
 // SearchByName is the resolver for the searchByName field.
 func (r *queryResolver) SearchByName(ctx context.Context, name string) ([]*model.Service, error) {
-	panic(fmt.Errorf("not implemented: SearchByName - searchByName"))
+	db, err := vars.GetDBFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return db.FindByName(ctx, name)
+}
+
+// SearchAll is the resolver for the searchAll field.
+func (r *queryResolver) SearchAll(ctx context.Context, query string) ([]*model.Service, error) {
+	db, err := vars.GetDBFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return db.SearchAll(ctx, query)
 }
 
 // Query returns QueryResolver implementation.
