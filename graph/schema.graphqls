@@ -5,6 +5,7 @@ schema {
 type Service {
   id: ID!
   name: String!
+  description: String!
   versions: [Version!]!
 }
 
@@ -17,4 +18,5 @@ type Query {
   services(page: Int): [Service!]!
   service(id: ID!): Service
   searchByName(name: String!): [Service!]!
+  searchAll(query: String!): [Service!]!
 }
