@@ -21,6 +21,8 @@ sudo podman-compose up --build
 docker-compose up --build
 ```
 
+Once the Postgres and app container have started, you can go to `http://localhost:8080` and use the GraphQL Playground or use curl from the command line.
+
 ## Design
 
 ### GraphQL
@@ -116,7 +118,7 @@ query {
 
 Output
 
-```
+```json
 {
   "data": {
     "searchByName": [
@@ -153,6 +155,177 @@ Output
           },
           {
             "version": "65b66010f55d72390a88d3af314168f7602bff8b"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Service Search Name and Description
+
+In this example search for `ipsum` will match multiple service descriptions.
+
+```graphql
+query {
+    searchAll(query: "ipsum") {
+    name
+    description
+    versions {
+      version
+    }
+  }
+}
+```
+
+Output
+
+```json
+{
+  "data": {
+    "searchAll": [
+      {
+        "name": "Contact Us",
+        "description": "Lorem ipsum dolor sit amet, consetetur sadipscing",
+        "versions": [
+          {
+            "version": "jezebel"
+          },
+          {
+            "version": "jovial"
+          },
+          {
+            "version": "jersey"
+          },
+          {
+            "version": "jaunty"
+          }
+        ]
+      },
+      {
+        "name": "Security",
+        "description": "Lorem ipsum dolor",
+        "versions": [
+          {
+            "version": "v3"
+          },
+          {
+            "version": "v4"
+          },
+          {
+            "version": "v2"
+          },
+          {
+            "version": "v1"
+          }
+        ]
+      },
+      {
+        "name": "Locate Us",
+        "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+        "versions": [
+          {
+            "version": "1.1.1"
+          },
+          {
+            "version": "1.2.0"
+          },
+          {
+            "version": "1.0.0"
+          },
+          {
+            "version": "1.1.0"
+          }
+        ]
+      },
+      {
+        "name": "Contact Us",
+        "description": "Lorem ipsum dolor sit amet, consetetur sadipscing",
+        "versions": [
+          {
+            "version": "157.0.0"
+          },
+          {
+            "version": "158.0.0"
+          },
+          {
+            "version": "155.0.0"
+          },
+          {
+            "version": "156.0.0"
+          }
+        ]
+      },
+      {
+        "name": "Security",
+        "description": "Lorem ipsum dolor",
+        "versions": [
+          {
+            "version": "7.7.7"
+          },
+          {
+            "version": "5.5.5"
+          },
+          {
+            "version": "4.4.4"
+          },
+          {
+            "version": "6.6.6"
+          }
+        ]
+      },
+      {
+        "name": "FX Rates International",
+        "description": "Lorem ipsum dolor",
+        "versions": [
+          {
+            "version": "1.0.0-rc1"
+          },
+          {
+            "version": "1.0.0"
+          },
+          {
+            "version": "1.0.0-beta1"
+          },
+          {
+            "version": "1.0.0-alpha1"
+          }
+        ]
+      },
+      {
+        "name": "FX Rates International",
+        "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor",
+        "versions": [
+          {
+            "version": "5.5.51"
+          },
+          {
+            "version": "5.5.50"
+          },
+          {
+            "version": "5.5.53"
+          },
+          {
+            "version": "5.5.52"
+          }
+        ]
+      },
+      {
+        "name": "Reporting",
+        "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+        "versions": [
+          {
+            "version": "v1.7.0"
+          },
+          {
+            "version": "v1.8.0"
+          },
+          {
+            "version": "v1.6.0"
+          },
+          {
+            "version": "v1.5.0"
           }
         ]
       }

@@ -73,7 +73,7 @@ func (d *DB) FindByName(ctx context.Context, name string) ([]*model.Service, err
 }
 
 func (d *DB) SearchAll(ctx context.Context, query string) ([]*model.Service, error) {
-	rows, err := d.DB.Query(ctx, searchAllQuery, query, query, query)
+	rows, err := d.DB.Query(ctx, searchAllQuery, query, query)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +99,6 @@ func readServicesFromRows(rows pgx.Rows) ([]*model.Service, error) {
 			return []*model.Service{}, err
 		}
 		svc := svcs[id.String()]
-		svcids = append(svcids, id.String())
 		if svc != nil {
 			svc.Versions = append(svc.Versions, &model.Version{ID: vid, Version: version})
 		} else {
@@ -107,8 +106,9 @@ func readServicesFromRows(rows pgx.Rows) ([]*model.Service, error) {
 				ID:          id,
 				Name:        name,
 				Description: description,
-				Versions:    []*model.Version{&model.Version{ID: vid, Version: version}},
+				Versions:    []*model.Version{{ID: vid, Version: version}},
 			}
+			svcids = append(svcids, id.String())
 		}
 
 		svcs[id.String()] = svc
