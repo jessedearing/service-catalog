@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -19,6 +20,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/jessedearing/service-catalog/graph"
+	"github.com/jessedearing/service-catalog/internal/health"
+	"github.com/jessedearing/service-catalog/internal/metrics"
 	"github.com/jessedearing/service-catalog/internal/storage"
 	"github.com/jessedearing/service-catalog/internal/vars"
 	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
@@ -41,12 +44,23 @@ func main() {
 		return nil
 	}
 
-	dbpool, err := pgxpool.NewWithConfig(ctx, dbconfig)
-	if err != nil {
-		panic(err)
+	var dbpool *pgxpool.Pool
+	var initFailures int
+	for initFailures = 0; initFailures < 5; initFailures++ {
+		time.Sleep(1 * time.Second)
+		dbpool, err = pgxpool.NewWithConfig(ctx, dbconfig)
+		if err != nil {
+			slog.ErrorContext(ctx, err.Error())
+			continue
+		}
+
+		if err = dbpool.Ping(ctx); err != nil {
+			slog.ErrorContext(ctx, err.Error())
+			continue
+		}
 	}
 
-	if err = dbpool.Ping(ctx); err != nil {
+	if initFailures >= 5 && err != nil {
 		panic(err)
 	}
 
@@ -76,9 +90,15 @@ func main() {
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
 	mux := http.NewServeMux()
+	hc, err := health.NewHealthHandler()
+	if err != nil {
+		panic(err)
+	}
 
 	mux.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	mux.Handle("/query", srv)
+	mux.Handle("/healthz", hc)
+	mux.Handle("/metricsz", metrics.NewMetricsHandler())
 	db := storage.New(dbpool)
 
 	httpserver := http.Server{
@@ -86,7 +106,7 @@ func main() {
 			dbctx := context.WithValue(ctx, vars.DBContextKey, db)
 			return dbctx
 		},
-		Addr:    fmt.Sprintf(":%s", port),
+		Addr:    fmt.Sprintf("0.0.0.0:%s", port),
 		Handler: mux,
 	}
 

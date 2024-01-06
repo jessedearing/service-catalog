@@ -89,6 +89,7 @@ func (d *DB) SearchAll(ctx context.Context, query string) ([]*model.Service, err
 // readServicesFromRows will read the services and the versions and return the
 // graphql model populated from the db
 func readServicesFromRows(rows pgx.Rows) ([]*model.Service, error) {
+	svcids := []string{}
 	svcs := map[string]*model.Service{}
 	for rows.Next() {
 		var id, vid uuid.UUID
@@ -98,6 +99,7 @@ func readServicesFromRows(rows pgx.Rows) ([]*model.Service, error) {
 			return []*model.Service{}, err
 		}
 		svc := svcs[id.String()]
+		svcids = append(svcids, id.String())
 		if svc != nil {
 			svc.Versions = append(svc.Versions, &model.Version{ID: vid, Version: version})
 		} else {
@@ -114,8 +116,8 @@ func readServicesFromRows(rows pgx.Rows) ([]*model.Service, error) {
 
 	retsvcs := []*model.Service{}
 
-	for _, svc := range svcs {
-		retsvcs = append(retsvcs, svc)
+	for _, svc := range svcids {
+		retsvcs = append(retsvcs, svcs[svc])
 	}
 
 	return retsvcs, nil

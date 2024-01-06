@@ -7,7 +7,19 @@
 
 ## Getting Started
 
-+ TODO: Add instructions for how to run this <2024-01-02, Jesse Dearing>
+The app can be launched with docker-compose or podman-compose on Linux.
+
+### Podman
+
+```sh
+sudo podman-compose up --build
+```
+
+### Docker
+
+```sh
+docker-compose up --build
+```
 
 ## Design
 
@@ -20,6 +32,14 @@ This was a new challenge for me and I ended up spending significantly more time 
 ### Resilience
 
 I'm using `github.com/jackc/pgx/v5` over `github.com/lib/pq` because it has a connection pool component. I've found the connection pool to recover in most failure cases. I also make sure that upon application start up it is able to communicate with the database or it will panic because if a new instance of the application comes online then it shouldn't start until it can communicate with the database.
+
+### Health Checks
+
+Health checks are on the `/healthz` endpoint. If this endpoint returns either a 200 or 503. In the event that the DB cannot be reached this could be used to fail a Kubernetes readiness check and cause the incoming requests to fail fast alleviating load on an already broken system.
+
+### Observability
+
+Prometheus metrics are available on the `/metricsz` endpoint. I publish a count of all requests on each resolver and a summary of resolver, the response code (2 for 200 and 5 for 500) their latency.
 
 ### Postgres as Database
 

@@ -17,9 +17,8 @@ WHERE
             subid.id
         FROM
             services subid
-        ORDER BY
-            subid.sequence
         LIMIT $1 OFFSET $2)
+ORDER BY s.sequence
 `
 
 const singleServiceQuery = `SELECT
@@ -56,25 +55,24 @@ WHERE
             $2 <-> sub.name DESC)
 `
 
-const searchAllQuery = `
-SELECT
+const searchAllQuery = `SELECT
     s.id,
     s.name,
     s.description,
-		v.id,
-		v.version
+    v.id,
+    v.version
 FROM
     versions v
     LEFT JOIN services s ON v.service_id = s.id
 WHERE
     $1 % s.name
-ORDER BY
-    $2 <-> s.name DESC
 UNION
 SELECT
     s.id,
     s.name,
-    s.description
+    s.description,
+    v.id,
+    v.version
 FROM
     versions v
     LEFT JOIN services s ON v.service_id = s.id
@@ -83,7 +81,8 @@ WHERE
         SELECT
             sub.id
         FROM
-            servcies sub
+            services sub
         WHERE
-            tsvector (sub.description) @@ tsquery ($3))
-`
+            tsvector (sub.description) @@ tsquery ($2)
+        ORDER BY
+            $3 <-> s.name DESC)`
