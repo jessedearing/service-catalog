@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  db:
+    image: docker.io/bitnami/postgresql:latest
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRESQL_USERNAME: service_catalog
+      POSTGRESQL_PASSWORD: service_catalog
+      POSTGRESQL_DATABASE: service_catalog
+    ports:
+      - '5432'
+  app:
+    build: .
+    environment:
+      PGURL: postgres://service_catalog:service_catalog@db:5432/service_catalog
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"

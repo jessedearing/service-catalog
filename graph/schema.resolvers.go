@@ -9,13 +9,17 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jessedearing/service-catalog/graph/model"
+	"github.com/jessedearing/service-catalog/internal/metrics"
 	"github.com/jessedearing/service-catalog/internal/vars"
 )
 
 // Services is the resolver for the services field.
 func (r *queryResolver) Services(ctx context.Context, page *int) ([]*model.Service, error) {
+	fin := metrics.RecordQuery("services")
+	defer fin("2")
 	db, err := vars.GetDBFromContext(ctx)
 	if err != nil {
+		fin("5")
 		return nil, err
 	}
 
@@ -23,37 +27,68 @@ func (r *queryResolver) Services(ctx context.Context, page *int) ([]*model.Servi
 	if page != nil {
 		pg = *page
 	}
-	return db.All(ctx, pg)
+	services, err := db.All(ctx, pg)
+	if err != nil {
+		fin("5")
+		return nil, err
+	}
+
+	return services, err
 }
 
 // Service is the resolver for the service field.
 func (r *queryResolver) Service(ctx context.Context, id uuid.UUID) (*model.Service, error) {
+	fin := metrics.RecordQuery("service")
+	defer fin("2")
 	db, err := vars.GetDBFromContext(ctx)
 	if err != nil {
+		fin("5")
 		return nil, err
 	}
 
-	return db.FindByID(ctx, id)
+	service, err := db.FindByID(ctx, id)
+	if err != nil {
+		fin("5")
+		return nil, err
+	}
+	return service, err
 }
 
 // SearchByName is the resolver for the searchByName field.
 func (r *queryResolver) SearchByName(ctx context.Context, name string) ([]*model.Service, error) {
+	fin := metrics.RecordQuery("searchByName")
+	defer fin("2")
 	db, err := vars.GetDBFromContext(ctx)
 	if err != nil {
+		fin("5")
 		return nil, err
 	}
 
-	return db.FindByName(ctx, name)
+	services, err := db.FindByName(ctx, name)
+	if err != nil {
+		fin("5")
+		return nil, err
+	}
+	return services, err
 }
 
 // SearchAll is the resolver for the searchAll field.
 func (r *queryResolver) SearchAll(ctx context.Context, query string) ([]*model.Service, error) {
+	fin := metrics.RecordQuery("searchAll")
+	defer fin("2")
 	db, err := vars.GetDBFromContext(ctx)
 	if err != nil {
+		fin("5")
 		return nil, err
 	}
 
-	return db.SearchAll(ctx, query)
+	services, err := db.SearchAll(ctx, query)
+	if err != nil {
+		fin("5")
+		return nil, err
+	}
+
+	return services, err
 }
 
 // Query returns QueryResolver implementation.
