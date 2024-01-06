@@ -12,6 +12,7 @@ services:
     ports:
       - '5432'
   app:
+    image: localhost/service-catalog_app:latest
     build: .
     environment:
       PGURL: postgres://service_catalog:service_catalog@db:5432/service_catalog

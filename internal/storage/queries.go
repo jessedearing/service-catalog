@@ -55,7 +55,7 @@ WHERE
             $2 <-> sub.name DESC)
 `
 
-const searchAllQuery = `SELECT
+const searchAllQuery = `SELECT DISTINCT
     s.id,
     s.name,
     s.description,
@@ -65,24 +65,4 @@ FROM
     versions v
     LEFT JOIN services s ON v.service_id = s.id
 WHERE
-    $1 % s.name
-UNION
-SELECT
-    s.id,
-    s.name,
-    s.description,
-    v.id,
-    v.version
-FROM
-    versions v
-    LEFT JOIN services s ON v.service_id = s.id
-WHERE
-    s.id IN (
-        SELECT
-            sub.id
-        FROM
-            services sub
-        WHERE
-            tsvector (sub.description) @@ tsquery ($2)
-        ORDER BY
-            $3 <-> s.name DESC)`
+$1::text % s.name OR tsvector (s.description) @@ tsquery ($2::text)`
