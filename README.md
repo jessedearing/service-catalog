@@ -84,18 +84,19 @@ EOF
 
 Note that you shouldn't include `query` in the `query` itself.
 
-### List all services
+### List all services (paginated)
 
-cat <<'EOF' |tr -d '\n\t' | curl http://localhost:8080/query -X POST -H 'Content-Type: application/json' --data @-
-{"query": "{
-        searchByName(name: \"boatification\") {
+```graphql
+query {
+  services(page: 1) {
     name
     description
     versions {
       version
     }
   }
-}"}
+}
+```
 
 ### Service Fuzzy Name Example
 
@@ -103,7 +104,7 @@ In this example a search query for "boatification" will match "notification"
 
 ```graphql
 query {
-	searchByName(name: "boatification") {
+    searchByName(name: "boatification") {
     name
     description
     versions {
