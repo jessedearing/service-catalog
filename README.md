@@ -1,5 +1,10 @@
 # Service Catalog
 
+> [!NOTE]
+> 2024-10-07  
+> This repository is a take home exercise for when I was looking for a job in
+> the spring of 2024. I've archived it since I've been employed.
+
 ## Legend
 
 * ❓ — External question. A question on requirements. Typically it would be directed to product or UX, but also may be any external party.
@@ -54,7 +59,7 @@ I also chose Postgres because I can implement the search requirements would be e
 
 ## Example Queries
 
-If you use the interface on http://localhost:8080 you can copy and paste the queries directly. If you wish to use curl you can do so by wrapping the graphql in a JSON object with a `query` field.
+If you use the interface on <http://localhost:8080> you can copy and paste the queries directly. If you wish to use curl you can do so by wrapping the graphql in a JSON object with a `query` field.
 
 For example, the following are equivalent:
 
